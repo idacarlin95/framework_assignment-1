@@ -13,6 +13,9 @@ http.createServer((req,res) => {
     const name = fullpath.query.name;
     const food = fullpath.query.food;
     const hobby = fullpath.query.hobby;
+    const fave = fullpath.query.fave;
+    const first = fullpath.query.first;
+    const second = fullpath.query.second;
 
     if (fullpath.pathname === "/") {
         fs.readFile('./html/home.html', (err, data) => {
@@ -23,7 +26,7 @@ http.createServer((req,res) => {
                 res.write(data)
             }
             res.end();
-        })
+        });
 
     } else if (fullpath.pathname === "/mood") {
         if (fullpath.query.theme === "dark") {
@@ -62,7 +65,7 @@ http.createServer((req,res) => {
             });
         }
        
-    } else if (fullpath.pathname.includes("/story")) {
+    } else if (fullpath.pathname === "/story") {
         if (fullpath.query.name) {
             res.write(`<p>Your name is ${name}</p>`);
         } if (queries.food) {
@@ -74,21 +77,63 @@ http.createServer((req,res) => {
                 if (err) {
                     res.write("<h1>Error reading html file</h1>");
                     res.write("Error");
-                } /// Countinue
-            })
+                } else {
+                    res.end(data);
+                }
+            });
         }
-
-        res.end();
-
+  
+    } else if (fullpath.pathname === "/colors") {
+        if (queries.name) {
+            res.write(`<p>Hello is this working, ${name}?</p>`)  
+        } if (queries.fave) {
+            res.write(`<p>Your favourite color is ${fave}, and you hate both green & red!</p>`)
+        } if (queries.colors === "red") {
+            fs.readFile('./html/red.html', (err, data) => {
+                if (err) {
+                    res.write("<h1>Error reading html file</h1>")
+                    res.write("Error");
+                } else {
+                    res.end(data);
+                }
+            }); 
+        } if (queries.colors === "green") {
+            fs.readFile('./html/green.html', (err, data) => {
+                if (err) {
+                    res.write("<h1>Error reading html file</h1>")
+                    res.write("Error");
+                } else {
+                    res.end(data);
+                }
+            });
+        } else {
+            fs.readFile('./html/colors.html', (err, data) => {
+                if (err) {
+                    res.write("<h1>Error reading html file</h1>")
+                    res.write("Error");
+                } else {
+                    res.end(data);
+                }
+            });
+        }
         
-        
-    } else if (fullpath.pathname === "/light") {
-        console.log("hi");
-    } else if (fullpath.pathname === "/dogs") {
-        console.log("hi");
-        res.write("Bob & Qvintus")
+    } else if (fullpath.pathname === "/animals") {
+        res.write("<h1>This page is about animals</h1>");
+        res.write("<p>Here you can read a story about two animals.</p>");
+        res.write("<h2>Choose two animals!</h2>");
+        res.write("<p>first=' '</p>");
+        res.write("<p>second=' '</p>");
+        if (first && second) {
+            res.write(`<p>One day, a ${first} and a ${second} decided to race.</p>`);
+            res.write(`<p>But ${first} got distracted, and ${second} got lost.</p>`);
+            res.write(`<p>Somehow, the both ended up at the snack stand instead.</p>`);
+            res.write(`<p>They called it a win-win and the ${first} and ${second} has been friend since!</p>`);
+        } else {
+            res.write("<p>Please choose TWO animals using ?first=animal1&second=animal2 in the URL.</p>");
+        }
         res.end();
     }
+    
 
 }).listen(PORT, () => console.log(`Connecting on port ${PORT}`))
 
